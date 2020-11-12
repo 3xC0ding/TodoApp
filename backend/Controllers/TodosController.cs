@@ -37,9 +37,20 @@ namespace TodoApp.Controllers
         #endregion
 
         [HttpGet]
-        public IEnumerable<Todo> Get()
+        public async Task<IEnumerable<Todo>> Get()
         {
-            return _context.Todos.AsNoTracking();
+            return await _context.Todos.AsNoTracking().ToListAsync();
+        }
+
+        [HttpGet("{id:long}")]
+        public async Task<IActionResult> Get(long id)
+        {
+            if(id <= 0)
+                return BadRequest($"Id inválido: {nameof(id)}");
+            
+            var todo = await _context.Todos.AsNoTracking().ToListAsync();
+            
+            return Ok(todo);
         }
     }
 }
