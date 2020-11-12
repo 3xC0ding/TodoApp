@@ -52,5 +52,32 @@ namespace TodoApp.Controllers
             
             return Ok(todo);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody]Todo todo)
+        {
+            _context.Todos.Add(todo);
+            await _context.SaveChangesAsync();
+            
+            return Ok(todo);
+        }
+
+        [HttpDelete("{id:long}")]
+        public async Task<IActionResult> Delete(long id)
+        {
+            if(id <= 0)
+                return BadRequest($"Id inválido: {nameof(id)}");
+            
+            var todo = await _context.Todos.FindAsync(id);
+
+            if(todo == null)
+                return NotFound($"Não encontrado: {nameof(id)}");        
+
+            _context.Todos.Remove(todo);
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }
